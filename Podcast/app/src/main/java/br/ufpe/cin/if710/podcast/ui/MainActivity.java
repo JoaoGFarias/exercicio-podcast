@@ -1,13 +1,13 @@
 package br.ufpe.cin.if710.podcast.ui;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.ufpe.cin.if710.podcast.R;
+import br.ufpe.cin.if710.podcast.db.PodcastDBHelper;
 import br.ufpe.cin.if710.podcast.domain.ItemFeed;
 import br.ufpe.cin.if710.podcast.domain.XmlFeedParser;
 import br.ufpe.cin.if710.podcast.ui.adapter.XmlFeedAdapter;
@@ -39,7 +40,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        items = (ListView) findViewById(R.id.items);
+        items = findViewById(R.id.items);
     }
 
     @Override
@@ -84,15 +85,14 @@ public class MainActivity extends Activity {
 
         @Override
         protected List<ItemFeed> doInBackground(String... params) {
-            List<ItemFeed> itemList = new ArrayList<>();
-            try {
-                itemList = XmlFeedParser.parse(getRssFeed(params[0]));
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (XmlPullParserException e) {
-                e.printStackTrace();
+            if(this.isListDownloaded()){
+                return this.retrieveXML();
+            } else {
+                List<ItemFeed> xml = this.downloadXML(params);
+                this.saveXML(xml);
+                return xml;
             }
-            return itemList;
+
         }
 
         @Override
@@ -116,6 +116,35 @@ public class MainActivity extends Activity {
                 }
             });
             /**/
+        }
+
+        private boolean isListDownloaded() {
+            return false;
+        }
+
+        private void saveXML(List<ItemFeed> xml) {
+            SQLiteDatabase db = PodcastDBHelper.getInstance(getApplicationContext()).getWritableDatabase();;
+            for (ItemFeed item : xml) {
+                ContentValues values = item.contentValueRepresentation();
+                long rowId = db.insert(PodcastDBHelper.DATABASE_TABLE, null, values);
+            }
+        }
+
+        private List<ItemFeed> retrieveXML() {
+            return null;
+        }
+
+        private List<ItemFeed> downloadXML(String... params) {
+            List<ItemFeed> itemList = new ArrayList<>();
+            try {
+                itemList = XmlFeedParser.parse(getRssFeed(params[0]));
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (XmlPullParserException e) {
+                e.printStackTrace();
+            }
+
+            return itemList;
         }
     }
 
