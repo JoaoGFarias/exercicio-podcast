@@ -50,6 +50,7 @@ public class ItemFeed {
         values.put(PodcastDBHelper.EPISODE_FILE_URI, "DUMB");
         return values;
     }
+
     @Override
     public String toString() {
         return title;

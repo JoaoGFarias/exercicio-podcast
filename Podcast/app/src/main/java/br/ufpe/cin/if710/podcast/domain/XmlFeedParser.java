@@ -1,7 +1,5 @@
 package br.ufpe.cin.if710.podcast.domain;
 
-import android.util.Log;
-
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -71,21 +69,16 @@ public class XmlFeedParser {
             String name = parser.getName();
             if (name.equals("title")) {
                 title = readData(parser, "title");
-            }
-            else if (name.equals("guid")) {
+            } else if (name.equals("guid")) {
                 link = readData(parser, "guid");
-            }
-            else if (name.equals("pubDate")) {
+            } else if (name.equals("pubDate")) {
                 pubDate = readData(parser, "pubDate");
-            }
-            else if (name.equals("description")) {
+            } else if (name.equals("description")) {
                 description = readData(parser, "description");
-            }
-            else if (name.equals("enclosure")) {
+            } else if (name.equals("enclosure")) {
                 downloadLink = readEnclosure(parser);
                 skip(parser);
-            }
-            else {
+            } else {
                 skip(parser);
             }
         }

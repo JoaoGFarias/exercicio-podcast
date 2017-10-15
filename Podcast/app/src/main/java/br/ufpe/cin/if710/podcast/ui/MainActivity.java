@@ -3,6 +3,7 @@ package br.ufpe.cin.if710.podcast.ui;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -58,7 +59,7 @@ public class MainActivity extends Activity {
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
-            startActivity(new Intent(this,SettingsActivity.class));
+            startActivity(new Intent(this, SettingsActivity.class));
         }
 
         return super.onOptionsItemSelected(item);
@@ -75,6 +76,29 @@ public class MainActivity extends Activity {
         super.onStop();
         XmlFeedAdapter adapter = (XmlFeedAdapter) items.getAdapter();
         adapter.clear();
+    }
+
+    //TODO Opcional - pesquise outros meios de obter arquivos da internet
+    private String getRssFeed(String feed) throws IOException {
+        InputStream in = null;
+        String rssFeed = "";
+        try {
+            URL url = new URL(feed);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            in = conn.getInputStream();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            for (int count; (count = in.read(buffer)) != -1; ) {
+                out.write(buffer, 0, count);
+            }
+            byte[] response = out.toByteArray();
+            rssFeed = new String(response, "UTF-8");
+        } finally {
+            if (in != null) {
+                in.close();
+            }
+        }
+        return rssFeed;
     }
 
     private class DownloadXmlTask extends AsyncTask<String, Void, List<ItemFeed>> {
@@ -158,28 +182,5 @@ public class MainActivity extends Activity {
 
             return itemList;
         }
-    }
-
-    //TODO Opcional - pesquise outros meios de obter arquivos da internet
-    private String getRssFeed(String feed) throws IOException {
-        InputStream in = null;
-        String rssFeed = "";
-        try {
-            URL url = new URL(feed);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            in = conn.getInputStream();
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            byte[] buffer = new byte[1024];
-            for (int count; (count = in.read(buffer)) != -1; ) {
-                out.write(buffer, 0, count);
-            }
-            byte[] response = out.toByteArray();
-            rssFeed = new String(response, "UTF-8");
-        } finally {
-            if (in != null) {
-                in.close();
-            }
-        }
-        return rssFeed;
     }
 }
