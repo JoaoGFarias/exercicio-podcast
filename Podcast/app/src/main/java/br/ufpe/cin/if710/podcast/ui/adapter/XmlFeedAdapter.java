@@ -1,11 +1,12 @@
 package br.ufpe.cin.if710.podcast.ui.adapter;
 
-import java.util.List;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import java.util.List;
 
 import br.ufpe.cin.if710.podcast.R;
 import br.ufpe.cin.if710.podcast.domain.ItemFeed;
@@ -17,6 +18,23 @@ public class XmlFeedAdapter extends ArrayAdapter<ItemFeed> {
     public XmlFeedAdapter(Context context, int resource, List<ItemFeed> objects) {
         super(context, resource, objects);
         linkResource = resource;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        ViewHolder holder;
+        if (convertView == null) {
+            convertView = View.inflate(getContext(), linkResource, null);
+            holder = new ViewHolder();
+            holder.item_title = convertView.findViewById(R.id.item_title);
+            holder.item_date = convertView.findViewById(R.id.item_date);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
+        holder.item_title.setText(getItem(position).getTitle());
+        holder.item_date.setText(getItem(position).getPubDate());
+        return convertView;
     }
 
     /**
@@ -35,7 +53,7 @@ public class XmlFeedAdapter extends ArrayAdapter<ItemFeed> {
 
 
 	/*
-	@Override
+    @Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View rowView = inflater.inflate(R.layout.itemlista, parent, false);
@@ -49,22 +67,5 @@ public class XmlFeedAdapter extends ArrayAdapter<ItemFeed> {
     static class ViewHolder {
         TextView item_title;
         TextView item_date;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
-        if (convertView == null) {
-            convertView = View.inflate(getContext(), linkResource, null);
-            holder = new ViewHolder();
-            holder.item_title = convertView.findViewById(R.id.item_title);
-            holder.item_date = convertView.findViewById(R.id.item_date);
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
-        }
-        holder.item_title.setText(getItem(position).getTitle());
-        holder.item_date.setText(getItem(position).getPubDate());
-        return convertView;
     }
 }

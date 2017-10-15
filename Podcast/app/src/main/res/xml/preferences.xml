@@ -3,12 +3,12 @@
     android:key="@+id/pref_screen">
 
     <EditTextPreference
-        android:dialogTitle="@string/pref_title"
+        android:defaultValue="@string/feed_link"
         android:dialogMessage="@string/pref_msg"
+        android:dialogTitle="@string/pref_title"
         android:key="feedlink"
         android:negativeButtonText="@string/cancel"
         android:positiveButtonText="@string/change"
-        android:title="@string/pref_desc"
-        android:defaultValue="@string/feed_link" />
+        android:title="@string/pref_desc" />
 
 </PreferenceScreen>

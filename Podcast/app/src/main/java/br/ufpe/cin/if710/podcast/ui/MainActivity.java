@@ -3,11 +3,14 @@ package br.ufpe.cin.if710.podcast.ui;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -31,6 +34,11 @@ public class MainActivity extends Activity {
 
     //ao fazer envio da resolucao, use este link no seu codigo!
     private final String RSS_FEED = "http://leopoldomt.com/if710/fronteirasdaciencia.xml";
+    public static final String CLICKED_TITLE = "CLICKED_TITLE";
+    public static final String CLICKED_DESCRIPTION = "CLICKED_DESCRIPTION";
+    public static final String CLICKED_PUBDATE = "CLICKED_PUBDATE";
+    public static final String CLICKED_DOWNLOADLINK = "CLICKED_DOWNLOADLINK";
+
     //TODO teste com outros links de podcast
 
     private ListView items;
@@ -58,7 +66,7 @@ public class MainActivity extends Activity {
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
-            startActivity(new Intent(this,SettingsActivity.class));
+            startActivity(new Intent(this, SettingsActivity.class));
         }
 
         return super.onOptionsItemSelected(item);
@@ -75,6 +83,29 @@ public class MainActivity extends Activity {
         super.onStop();
         XmlFeedAdapter adapter = (XmlFeedAdapter) items.getAdapter();
         adapter.clear();
+    }
+
+    //TODO Opcional - pesquise outros meios de obter arquivos da internet
+    private String getRssFeed(String feed) throws IOException {
+        InputStream in = null;
+        String rssFeed = "";
+        try {
+            URL url = new URL(feed);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            in = conn.getInputStream();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            for (int count; (count = in.read(buffer)) != -1; ) {
+                out.write(buffer, 0, count);
+            }
+            byte[] response = out.toByteArray();
+            rssFeed = new String(response, "UTF-8");
+        } finally {
+            if (in != null) {
+                in.close();
+            }
+        }
+        return rssFeed;
     }
 
     private class DownloadXmlTask extends AsyncTask<String, Void, List<ItemFeed>> {
@@ -106,17 +137,23 @@ public class MainActivity extends Activity {
             //atualizar o list view
             items.setAdapter(adapter);
             items.setTextFilterEnabled(true);
-            /*
+
             items.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     XmlFeedAdapter adapter = (XmlFeedAdapter) parent.getAdapter();
                     ItemFeed item = adapter.getItem(position);
-                    String msg = item.getTitle() + " " + item.getLink();
-                    Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(MainActivity.this, EpisodeDetailActivity.class);
+
+                    intent.putExtra(MainActivity.CLICKED_TITLE, item.getTitle().replaceAll("\\s+", " "));
+                    intent.putExtra(MainActivity.CLICKED_DESCRIPTION, item.getDescription().replaceAll("\\s+", " "));
+                    intent.putExtra(MainActivity.CLICKED_PUBDATE, item.getPubDate());
+                    intent.putExtra(MainActivity.CLICKED_DOWNLOADLINK, item.getDownloadLink());
+                    startActivity(intent);
                 }
             });
-            /**/
+
         }
 
         private boolean isListDownloaded() {
@@ -158,28 +195,5 @@ public class MainActivity extends Activity {
 
             return itemList;
         }
-    }
-
-    //TODO Opcional - pesquise outros meios de obter arquivos da internet
-    private String getRssFeed(String feed) throws IOException {
-        InputStream in = null;
-        String rssFeed = "";
-        try {
-            URL url = new URL(feed);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            in = conn.getInputStream();
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            byte[] buffer = new byte[1024];
-            for (int count; (count = in.read(buffer)) != -1; ) {
-                out.write(buffer, 0, count);
-            }
-            byte[] response = out.toByteArray();
-            rssFeed = new String(response, "UTF-8");
-        } finally {
-            if (in != null) {
-                in.close();
-            }
-        }
-        return rssFeed;
     }
 }
