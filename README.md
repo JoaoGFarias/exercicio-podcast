@@ -41,20 +41,22 @@ episódio, atualizações em segundo plano, notificações de novos episódios, 
 
 # Status
 
-| Passo | Completou? |
-| ------ | ------ |
-| 1 | **não** |
-| 2 | **não** |
-| 3 | **não** |
-| 4 | **não** |
-| 5 | **não** |
-| 6 | **não** |
-| 7 | **não** |
-| 8 | **não** |
-| 9 | **não** |
-| 10 | **não** |
-| 11 | **não** |
-| 12 | **não** |
-| 13 | **não** |
-| 14 | **não** |
-| 15 | **não** |
+Comentários do código no PR indicado para cada task.
+
+| Passo | Completou? | PR |
+| ------ | ------ | ------ |
+| 1 | **SIM** | N/A |
+| 2 | **SIM** | [LINK](https://github.com/JoaoGFarias/exercicio-podcast/pull/1) |
+| 3 | **PARCIALMENTE, VER COMENTARIOS** | [LINK1](https://github.com/JoaoGFarias/exercicio-podcast/pull/2) [LINK2](https://github.com/JoaoGFarias/exercicio-podcast/pull/2) |
+| 4 | **não** | N/A |
+| 5 | **SIM** | [LINK](https://github.com/JoaoGFarias/exercicio-podcast/pull/4)|
+| 6 | **não** | N/A |
+| 7 | **não** | N/A |
+| 8 | **não** | N/A |
+| 9 | **não** | N/A |
+| 10 | **não** | N/A |
+| 11 | **não** | N/A |
+| 12 | **não** | N/A |
+| 13 | **não** | N/A |
+| 14 | **não** | N/A |
+| 15 | **não** | N/A |
