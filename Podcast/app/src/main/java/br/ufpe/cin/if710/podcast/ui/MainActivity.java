@@ -85,11 +85,12 @@ public class MainActivity extends Activity {
 
         @Override
         protected List<ItemFeed> doInBackground(String... params) {
-            if(this.isListDownloaded()){
-                return this.retrieveXML();
+            if (this.isListDownloaded()) {
+                return this.retrieveXML(params);
             } else {
                 List<ItemFeed> xml = this.downloadXML(params);
                 this.saveXML(xml);
+                this.markListAsSaved();
                 return xml;
             }
 
@@ -119,19 +120,30 @@ public class MainActivity extends Activity {
         }
 
         private boolean isListDownloaded() {
-            return false;
+            SharedPreferences listSavedPref = getApplicationContext().getSharedPreferences(getString(R.string.list_saved), MODE_PRIVATE);
+            return listSavedPref.getBoolean(getString(R.string.list_saved), false);
+        }
+
+        private void markListAsSaved() {
+            SharedPreferences.Editor editor = getApplicationContext()
+                    .getSharedPreferences(getString(R.string.list_saved), MODE_PRIVATE)
+                    .edit();
+            editor.putBoolean(getString(R.string.list_saved), true);
+            editor.commit();
         }
 
         private void saveXML(List<ItemFeed> xml) {
-            SQLiteDatabase db = PodcastDBHelper.getInstance(getApplicationContext()).getWritableDatabase();;
+            SQLiteDatabase db = PodcastDBHelper.getInstance(getApplicationContext()).getWritableDatabase();
+            db.delete(PodcastDBHelper.DATABASE_TABLE, "1", null);
             for (ItemFeed item : xml) {
                 ContentValues values = item.contentValueRepresentation();
-                long rowId = db.insert(PodcastDBHelper.DATABASE_TABLE, null, values);
+                db.insert(PodcastDBHelper.DATABASE_TABLE, null, values);
             }
         }
 
-        private List<ItemFeed> retrieveXML() {
-            return null;
+        private List<ItemFeed> retrieveXML(String... params) {
+            // TODO - Retrieve data from DB instead of downloading it
+            return this.downloadXML(params);
         }
 
         private List<ItemFeed> downloadXML(String... params) {
